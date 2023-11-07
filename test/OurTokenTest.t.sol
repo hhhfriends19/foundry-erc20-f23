@@ -26,4 +26,20 @@ contract OurTokenTest is Test {
     function testBobBalance() public {
         assertEq(STARTING_BALANCE, ourToken.balanceOf(bob));
     }
+
+    function testAllowancesWorks() public {
+        uint256 initialAllowance = 1000;
+
+        // Bob approves Alices to spend tokens on his behalf
+        vm.prank(bob);
+        ourToken.approve(alice, initialAllowance);
+
+        uint256 transferAmount = 500;
+
+        vm.prank(alice);
+        ourToken.transferFrom(bob, alice, transferAmount);
+
+        assertEq(ourToken.balanceOf(alice), transferAmount);
+        assertEq(ourToken.balanceOf(bob), STARTING_BALANCE - transferAmount);
+    }
 }
